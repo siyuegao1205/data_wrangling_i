@@ -78,7 +78,6 @@ pulse_df = read_sas("data/public_pulse_data.sas7bdat")
 write_csv(lotr_words_df, file = "results/lotr_words_df.csv")
 ```
 
-
 ## Why not base r???
 
 ```{r}
