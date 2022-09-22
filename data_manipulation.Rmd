@@ -72,7 +72,7 @@ select(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
 If all you want to do is rename something, you can use `rename` instead of `select`. This will rename the variables you care about, and keep everything else:
 
 ```{r}
-litters_data2 = rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
+litters_data_renamed = rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
 ```
 
 There are some handy helper functions for `select`; read about all of them using `?select_helpers`. I use `starts_with()`, `ends_with()`, and `contains()` often, especially when there variables are named with suffixes or other standard patterns:
@@ -113,7 +113,9 @@ filter(litters_data, gd_of_birth == 20)
 ```
 
 ```{r}
-filter(litters_data, group == "Con7" & gd_of_birth == 20)
+filter1 = filter(litters_data, group == "Con7" & gd_of_birth == 20)
+filter2 = filter(litters_data, (!(pups_survive == 4) & (gd_of_birth == 20))) ##############
+filter3 = filter(litters_data, ((pups_survive == 4) & (gd_of_birth == 20)))
 ```
 
 
@@ -242,7 +244,7 @@ In this example, the dataset argument is called `dat` in `janitor::clean_names`,
 
 ```{r}
 litters_data %>%
-  lm(wt_gain ~ pups_born_alive, data = .) %>%
+  lm(wt_gain ~ pups_born_alive, data = .) %>% #a baseR function
   broom::tidy()
 ```
 

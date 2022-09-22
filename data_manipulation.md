@@ -114,7 +114,7 @@ of `select`. This will rename the variables you care about, and keep
 everything else:
 
 ``` r
-litters_data2 = rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
+litters_data_renamed = rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
 ```
 
 There are some handy helper functions for `select`; read about all of
@@ -202,16 +202,9 @@ filter(litters_data, gd_of_birth == 20)
 ```
 
 ``` r
-filter(litters_data, group == "Con7" & gd_of_birth == 20)
-## # A tibble: 4 × 8
-##   group litter_number   gd0_weight gd18_weight gd_of_b…¹ pups_…² pups_…³ pups_…⁴
-##   <chr> <chr>                <dbl>       <dbl>     <int>   <int>   <int>   <int>
-## 1 Con7  #85                   19.7        34.7        20       3       4       3
-## 2 Con7  #4/2/95/3-3           NA          NA          20       6       0       6
-## 3 Con7  #2/2/95/3-2           NA          NA          20       6       0       4
-## 4 Con7  #1/5/3/83/3-3/2       NA          NA          20       9       0       9
-## # … with abbreviated variable names ¹​gd_of_birth, ²​pups_born_alive,
-## #   ³​pups_dead_birth, ⁴​pups_survive
+filter1 = filter(litters_data, group == "Con7" & gd_of_birth == 20)
+filter2 = filter(litters_data, (!(pups_survive == 4) & (gd_of_birth == 20))) ##############
+filter3 = filter(litters_data, ((pups_survive == 4) & (gd_of_birth == 20)))
 ```
 
 A very common filtering step requires you to omit missing observations.
@@ -438,7 +431,7 @@ might use:
 
 ``` r
 litters_data %>%
-  lm(wt_gain ~ pups_born_alive, data = .) %>%
+  lm(wt_gain ~ pups_born_alive, data = .) %>% #a baseR function
   broom::tidy()
 ## # A tibble: 2 × 5
 ##   term            estimate std.error statistic  p.value
