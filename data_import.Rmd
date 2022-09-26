@@ -15,7 +15,7 @@ library(haven)
 Let's import data using the `readr` package.
 
 ```{r}
-litters_df = read_csv("data/FAS_litters.csv")
+litters_df = read_csv("./data/FAS_litters.csv")
 litters_df = janitor::clean_names(litters_df)
 ```
 
@@ -24,6 +24,7 @@ Look at the data
 ```{r}
 litters_df
 
+names(litters_df)
 head(litters_df)
 tail(litters_df)
 ```
@@ -33,33 +34,54 @@ View(litters_df)
 ```
 
 ```{r}
-skimr::skim(litters_df)
+skimr::skim(litters_df) # more neat than useful
 ```
 
 `read_csv` options ..
 
 ```{r, eval = FALSE}
-read_csv("data/FAS_litters.csv", na = c("", "NA", 999, 88), skip = 2) # skipping the first two rows
+read_csv("./data/FAS_litters.csv", na = c("", "NA", 999, 88), skip = 2) # skipping the first two rows
 ```
 
+Parsing columns
+
+```{r}
+litters_data = read_csv(file = "./data/FAS_litters.csv",
+  col_types = cols(
+    Group = col_character(),
+    `Litter Number` = col_character(),
+    `GD0 weight` = col_double(),
+    `GD18 weight` = col_double(),
+    `GD of Birth` = col_integer(),
+    `Pups born alive` = col_integer(),
+    `Pups dead @ birth` = col_integer(),
+    `Pups survive` = col_integer()
+  )
+)
+
+tail(litters_data)
+
+litters_data_2 = read_csv(file = "./data/FAS_litters.csv",
+  col_types = "ccddiiii"
+)
+```
 
 ## Other file formats
 
 We need to read in an excel spreadsheet ...
 
 ```{r}
-mlb_df = read_excel("data/mlb11.xlsx")
+mlb_df = read_excel("./data/mlb11.xlsx")
 ```
 
 ```{r, eval = FALSE}
 View(mlb_df)
-
 ```
 
 ```{r}
 lotr_words_df =
   read_excel(
-    "data/LotR_Words.xlsx",
+    "./data/LotR_Words.xlsx",
     range = "B3:D6")
 ```
 
@@ -68,9 +90,8 @@ lotr_words_df =
 Read in a SAS dataset.
 
 ```{r}
-pulse_df = read_sas("data/public_pulse_data.sas7bdat")
+pulse_df = read_sas("./data/public_pulse_data.sas7bdat")
 ```
-
 
 ## Data Export
 
@@ -81,6 +102,6 @@ write_csv(lotr_words_df, file = "results/lotr_words_df.csv")
 ## Why not base r???
 
 ```{r}
-dont_do_this_df = read.csv("data/FAS_litters.csv") #read.csv: baseR
+dont_do_this_df = read.csv("data/FAS_litters.csv") #read.csv: in baseR package
 ```
 

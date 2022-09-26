@@ -15,7 +15,7 @@ Data Import
 Let’s import data using the `readr` package.
 
 ``` r
-litters_df = read_csv("data/FAS_litters.csv")
+litters_df = read_csv("./data/FAS_litters.csv")
 ```
 
     ## Rows: 49 Columns: 8
@@ -54,6 +54,13 @@ litters_df
     ## #   ²​pups_born_alive, ³​pups_dead_birth, ⁴​pups_survive
 
 ``` r
+names(litters_df)
+```
+
+    ## [1] "group"           "litter_number"   "gd0_weight"      "gd18_weight"    
+    ## [5] "gd_of_birth"     "pups_born_alive" "pups_dead_birth" "pups_survive"
+
+``` r
 head(litters_df)
 ```
 
@@ -90,7 +97,7 @@ View(litters_df)
 ```
 
 ``` r
-skimr::skim(litters_df)
+skimr::skim(litters_df) # more neat than useful
 ```
 
 |                                                  |            |
@@ -128,7 +135,44 @@ Data summary
 `read_csv` options ..
 
 ``` r
-read_csv("data/FAS_litters.csv", na = c("", "NA", 999, 88), skip = 2) # skipping the first two rows
+read_csv("./data/FAS_litters.csv", na = c("", "NA", 999, 88), skip = 2) # skipping the first two rows
+```
+
+Parsing columns
+
+``` r
+litters_data = read_csv(file = "./data/FAS_litters.csv",
+  col_types = cols(
+    Group = col_character(),
+    `Litter Number` = col_character(),
+    `GD0 weight` = col_double(),
+    `GD18 weight` = col_double(),
+    `GD of Birth` = col_integer(),
+    `Pups born alive` = col_integer(),
+    `Pups dead @ birth` = col_integer(),
+    `Pups survive` = col_integer()
+  )
+)
+
+tail(litters_data)
+```
+
+    ## # A tibble: 6 × 8
+    ##   Group `Litter Number` `GD0 weight` GD18 weig…¹ GD of…² Pups …³ Pups …⁴ Pups …⁵
+    ##   <chr> <chr>                  <dbl>       <dbl>   <int>   <int>   <int>   <int>
+    ## 1 Low8  #79                     25.4        43.8      19       8       0       7
+    ## 2 Low8  #100                    20          39.2      20       8       0       7
+    ## 3 Low8  #4/84                   21.8        35.2      20       4       0       4
+    ## 4 Low8  #108                    25.6        47.5      20       8       0       7
+    ## 5 Low8  #99                     23.5        39        20       6       0       5
+    ## 6 Low8  #110                    25.5        42.7      20       7       0       6
+    ## # … with abbreviated variable names ¹​`GD18 weight`, ²​`GD of Birth`,
+    ## #   ³​`Pups born alive`, ⁴​`Pups dead @ birth`, ⁵​`Pups survive`
+
+``` r
+litters_data_2 = read_csv(file = "./data/FAS_litters.csv",
+  col_types = "ccddiiii"
+)
 ```
 
 ## Other file formats
@@ -136,7 +180,7 @@ read_csv("data/FAS_litters.csv", na = c("", "NA", 999, 88), skip = 2) # skipping
 We need to read in an excel spreadsheet …
 
 ``` r
-mlb_df = read_excel("data/mlb11.xlsx")
+mlb_df = read_excel("./data/mlb11.xlsx")
 ```
 
 ``` r
@@ -146,7 +190,7 @@ View(mlb_df)
 ``` r
 lotr_words_df =
   read_excel(
-    "data/LotR_Words.xlsx",
+    "./data/LotR_Words.xlsx",
     range = "B3:D6")
 ```
 
@@ -155,7 +199,7 @@ lotr_words_df =
 Read in a SAS dataset.
 
 ``` r
-pulse_df = read_sas("data/public_pulse_data.sas7bdat")
+pulse_df = read_sas("./data/public_pulse_data.sas7bdat")
 ```
 
 ## Data Export
@@ -167,5 +211,5 @@ write_csv(lotr_words_df, file = "results/lotr_words_df.csv")
 ## Why not base r???
 
 ``` r
-dont_do_this_df = read.csv("data/FAS_litters.csv") #read.csv: baseR
+dont_do_this_df = read.csv("data/FAS_litters.csv") #read.csv: in baseR package
 ```
