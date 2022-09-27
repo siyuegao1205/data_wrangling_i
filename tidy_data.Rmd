@@ -3,7 +3,80 @@ title: "Tidy Data"
 output: github_document
 ---
 
-```{r setup}
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
 library(tidyverse)
 options(tibble.print_min = 5)
 ```
+
+# pivot_longer
+
+## Instructions
+
+```{r}
+pulse_df = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>%
+  janitor::clean_names()
+
+pulse_df
+
+pulse_tidy_data = 
+  pivot_longer(
+    pulse_df, # the dataset that you'd like to pivot
+    bdi_score_bl:bdi_score_12m, # the columns should be pivoted in
+    names_to = "visit", # the new name
+    values_to = "bdi")
+
+pulse_tidy_data
+
+pulse_tidy_data = 
+  pivot_longer(
+    pulse_df,
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  mutate(
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit)
+  )
+
+pulse_tidy_data
+
+pulse_df = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  relocate(visit) %>%
+  mutate(
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit)
+    ) %>%
+  arrange(id, visit)
+
+print(pulse_df, n = 12)
+```
+
+## Learning Assessment
+
+```{r}
+litters_df = read_csv("./data/FAS_litters.csv") %>% # command + shift + m
+  janitor::clean_names() %>% 
+  select(litter_number, ends_with("weight")) %>% 
+  pivot_longer(
+    gd0_weight:gd18_weight,
+    names_to = "gd", 
+    values_to = "weight") %>% 
+  mutate(
+    gd = recode(gd, "gd0_weight" = 0, "gd18_weight" = 18)
+  )
+```
+
+
