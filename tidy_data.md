@@ -133,9 +133,7 @@ litters_df = read_csv("./data/FAS_litters.csv") %>% # command + shift + m
     gd0_weight:gd18_weight,
     names_to = "gd", 
     values_to = "weight") %>% 
-  mutate(
-    gd = recode(gd, "gd0_weight" = 0, "gd18_weight" = 18)
-  )
+  mutate(gd = recode(gd, "gd0_weight" = 0, "gd18_weight" = 18))
 ```
 
     ## Rows: 49 Columns: 8
@@ -146,3 +144,71 @@ litters_df = read_csv("./data/FAS_litters.csv") %>% # command + shift + m
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+In one sense, this is “tidy” because I have a variable for day and a
+variable for weight rather that using values in my variable names.
+However, it’s less useful if I’m interested in computing or analyzing
+weight gain during pregnancy.
+
+# pivot_wider
+
+``` r
+analysis_result = tibble(
+  group = c("treatment", "treatment", "placebo", "placebo"),
+  time = c("pre", "post", "pre", "post"),
+  mean = c(4, 8, 3.5, 4)
+)
+
+analysis_result
+```
+
+    ## # A tibble: 4 × 3
+    ##   group     time   mean
+    ##   <chr>     <chr> <dbl>
+    ## 1 treatment pre     4  
+    ## 2 treatment post    8  
+    ## 3 placebo   pre     3.5
+    ## 4 placebo   post    4
+
+``` r
+analysis_results_wide =
+  pivot_wider(
+    analysis_result, 
+    names_from = "time", 
+    values_from = "mean")
+
+analysis_results_wide
+```
+
+    ## # A tibble: 2 × 3
+    ##   group       pre  post
+    ##   <chr>     <dbl> <dbl>
+    ## 1 treatment   4       8
+    ## 2 placebo     3.5     4
+
+# binding rows
+
+``` r
+fellowship_ring = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "B3:D6") %>% 
+  mutate(movie = "fellowship_ring")
+
+two_towers = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "F3:H6") %>% 
+  mutate(movie = "two_towers")
+
+return_king = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "J3:L6") %>% 
+  mutate(movie = "return_king")
+
+lotr_tidy = 
+  bind_rows(fellowship_ring, two_towers, return_king) %>%
+  janitor::clean_names() %>% 
+  pivot_longer(
+    female:male,
+    names_to = "gender", 
+    values_to = "words"
+  ) %>% 
+  mutate(race = str_to_lower(race)) %>% 
+  select(movie, everything())
+```
